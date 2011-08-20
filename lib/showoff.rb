@@ -27,6 +27,12 @@ rescue LoadError
   Object.send(:remove_const,:Markdown)
   Markdown = BlueCloth
 end
+
+begin
+  require 'airplay'
+rescue LoadError
+  $stderr.puts 'Apple TV airplay streaming disabled - install airplay gem'
+end
 require 'pp'
 
 class ShowOff < Sinatra::Application
@@ -57,6 +63,11 @@ class ShowOff < Sinatra::Application
     @cached_image_size = {}
     @pres_name = options.pres_dir.split('/').pop
     require_ruby_files
+
+    if defined?(Airplay)
+      @airplay = Airplay::Client.new
+      puts "Using Airplay Server #{ @airplay.active_server }"
+    end
   end
 
   def require_ruby_files
@@ -437,6 +448,11 @@ class ShowOff < Sinatra::Application
      eval(code).to_s
    rescue => e
      e.message
+   end
+
+   put '/airplay' do
+     puts "Received airplay stream request for slide #{ params[:slide] }"
+     @airplay.send_image "/Users/pote/Desktop/implement.jpg"
    end
 
   get '/eval_ruby' do
