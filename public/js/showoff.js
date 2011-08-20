@@ -408,7 +408,21 @@ function keyDown(event)
 	{
 		runPreShow();
 	}
+  else if (key == 65 && shiftKeyActive) // 'A' for Airplay Stream
+  {
+    streamAirplay();
+  }
 	return true
+}
+
+function streamAirplay()
+{
+  console.log("Sending request for slide 5 to be streamed to Airplay");
+  var airplay = new XMLHttpRequest;
+  var params = "slide=" + (slidenum + 1);
+
+  airplay.open("PUT", "/airplay?" + params);
+  airplay.send(params);
 }
 
 function toggleFooter()
