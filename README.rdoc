@@ -1,9 +1,26 @@
-= ShowOff Presentation Software
+= ShowOff Presentation Software - Airplay Fork
 
 ShowOff is a Sinatra web app that reads simple configuration files for a
-presentation.  It is sort of like a Keynote web app engine - think S5 +
-Slidedown.  I am using it to do all my talks in 2010, because I have a deep
-hatred in my heart for Keynote and yet it is by far the best in the field.
+presentation. It was written by Scott Chacon and the main repository lives
+at https://github.com/schacon/showoff.
+
+This fork intends to integrate showoff with the airplay gem, written by Bruno
+Aguirre and maintained at https://github.com/elcuervo/airplay so that Showoff
+can stream the slides to an Apple TV or another computer running Airserver.
+All work here at the moment of this writing is completely experimental and in
+now way a stable build, if you need to get this working please don't hesitate
+to contact me and I'll walk you around the installation.
+
+As of now - and until I find it in myself to port the library - the key
+functionality for the airplay stream still relies on webkit2png, a library
+implemented in Python by Paul Hammond (https://github.com/paulhammond/webkit2png)
+and setup script will be required, I'll write that soon enough so that the
+installation process is actually doable (I'll still be too messy for my taste)
+
+Anyway, thanks for paying attention to this little fork, stay tuned for
+updates, which should be coming soon :)
+
+___
 
 The idea is that you setup your markdown slide files in section subdirectories
 and then startup the showoff server in that directory.  It will read in your
