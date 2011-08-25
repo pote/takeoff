@@ -66,8 +66,9 @@ class ShowOff < Sinatra::Application
     require_ruby_files
 
     if defined?(Airplay)
+      @presentation_path = options.pres_dir
       @airplay = Airplay::Client.new
-      $stderr.puts "Using Airplay Server #{ @airplay.active_server }"
+      $stderr.puts "Using Airplay Server \"#{ @airplay.active_server.name }\" (#{ @airplay.active_server.ip })"
     end
   end
 
@@ -452,13 +453,12 @@ class ShowOff < Sinatra::Application
 
    put '/airplay' do
      slide = params[:slide]
-     pwd = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-
      puts "Received airplay stream request for slide #{ slide }"
 
-     %x[webkit2png -F http://0.0.0.0:9090/##{ slide } #{ pwd }/png/#{ slide }.png]
+     puts "Generating png version of slide #{ slide }, storing into #{ @presentation_path }/png"
+     %x[webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
 
-     @airplay.send_image "#{ pwd }/png/#{ slide }.png"
+     @airplay.send_image "#{ @presentation_path }/png/#{ slide }-full.png"
    end
 
   get '/eval_ruby' do
