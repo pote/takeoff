@@ -60,13 +60,14 @@ class ShowOff < Sinatra::Application
       ShowOffUtils.presentation_config_file = options.pres_file
     end
     puts "Serving presentation from #{options.pres_dir}"
+
     @cached_image_size = {}
     @pres_name = options.pres_dir.split('/').pop
     require_ruby_files
 
     if defined?(Airplay)
       @airplay = Airplay::Client.new
-      puts "Using Airplay Server #{ @airplay.active_server }"
+      $stderr.puts "Using Airplay Server #{ @airplay.active_server }"
     end
   end
 
@@ -375,7 +376,6 @@ class ShowOff < Sinatra::Application
       # Save the PDF to a file
       file = kit.to_file('/tmp/preso.pdf')
     end
-
   end
 
 
@@ -451,8 +451,14 @@ class ShowOff < Sinatra::Application
    end
 
    put '/airplay' do
-     puts "Received airplay stream request for slide #{ params[:slide] }"
-     @airplay.send_image "/Users/pote/Desktop/implement.jpg"
+     slide = params[:slide]
+     pwd = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
+     puts "Received airplay stream request for slide #{ slide }"
+
+     %x[webkit2png -F http://0.0.0.0:9090/##{ slide } #{ pwd }/png/#{ slide }.png]
+
+     @airplay.send_image "#{ pwd }/png/#{ slide }.png"
    end
 
   get '/eval_ruby' do
