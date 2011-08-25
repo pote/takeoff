@@ -13,9 +13,9 @@ to contact me and I'll walk you around the installation.
 
 As of now - and until I find it in myself to port the library - the key
 functionality for the airplay stream still relies on webkit2png, a library
-implemented in Python by Paul Hammond (https://github.com/paulhammond/webkit2png)
-and setup script will be required, I'll write that soon enough so that the
-installation process is actually doable (I'll still be too messy for my taste)
+implemented in Python by Paul Hammond (https://github.com/paulhammond/webkit2png),
+a setup script will be required, I'll write that soon enough so that the
+installation process is actually doable (It'll still be too messy for my taste)
 
 Anyway, thanks for paying attention to this little fork, stay tuned for
 updates, which should be coming soon :)
