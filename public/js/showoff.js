@@ -408,21 +408,39 @@ function keyDown(event)
 	{
 		runPreShow();
 	}
+  else if (key == 71 && shiftKeyActive) // 'G' => Generate Airplay slides
+  {
+    prepareAirplay();
+  }
   else if (key == 65 && shiftKeyActive) // 'A' for Airplay Stream
   {
-    streamAirplay();
+    streamAirplay(true);
+  }
+  else if (key == 65)
+  {
+    streamAirplay()
   }
 	return true
 }
 
 function streamAirplay()
 {
-  console.log("Sending request for slide 5 to be streamed to Airplay");
+  console.log("Sending request for slide " + (slidenum + 1) + " to be streamed to Airplay");
   var airplay = new XMLHttpRequest;
   var params = "slide=" + (slidenum + 1);
 
   airplay.open("PUT", "/airplay?" + params);
   airplay.send(params);
+}
+
+function prepareAirplay()
+{
+  console.log("Sending request to prepare all Airplay slides")
+  var airplay = new XMLHttpRequest;
+  var params = "slides=" + slideTotal;
+
+  airplay.open("POST", "/airplay?" + params);
+  airplay.send(null);
 }
 
 function toggleFooter()

@@ -455,10 +455,21 @@ class ShowOff < Sinatra::Application
      slide = params[:slide]
      puts "Received airplay stream request for slide #{ slide }"
 
-     puts "Generating png version of slide #{ slide }, storing into #{ @presentation_path }/png"
-     %x[webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
+     if !FileTest.exists? "#{ @presentation_path }/png/#{ slide }-full.png"
+       puts "Generating png version of slide #{ slide }, storing into #{ @presentation_path }/png"
+       %x[webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
+     end
 
      @airplay.send_image "#{ @presentation_path }/png/#{ slide }-full.png"
+   end
+
+   post '/airplay' do
+     puts "Preparing all Airplay slides - be patient"
+     slides = params[:slides]
+     slides.to_i.times do |slide|
+       puts "Generating png version of slide #{ slide }, storing into #{ @presentation_path }/png"
+       %x[webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
+     end
    end
 
   get '/eval_ruby' do
