@@ -1,11 +1,11 @@
-= ShowOff Presentation Software - Airplay Fork
+= TakeOff Presentation Software - Airplay-integrated ShowOff Fork
 
-ShowOff is a Sinatra web app that reads simple configuration files for a
+TakeOff is a Sinatra web app that reads simple configuration files for a
 presentation. It was written by Scott Chacon and the main repository lives
 at https://github.com/schacon/showoff.
 
 This fork intends to integrate showoff with the airplay gem, written by Bruno
-Aguirre and maintained at https://github.com/elcuervo/airplay so that Showoff
+Aguirre and maintained at https://github.com/elcuervo/airplay so that Takeoff
 can stream the slides to an Apple TV or another computer running Airserver.
 All work here at the moment of this writing is completely experimental and in
 now way a stable build, if you need to get this working please don't hesitate
@@ -17,14 +17,15 @@ implemented in Python by Paul Hammond (https://github.com/paulhammond/webkit2png
 a setup script will be required, I'll write that soon enough so that the
 installation process is actually doable (It'll still be too messy for my taste)
 
-Anyway, thanks for paying attention to this little fork, stay tuned for
-updates, which should be coming soon :)
+== Setup
+
+gem install takeoff
 
 ___
 
 The idea is that you setup your markdown slide files in section subdirectories
-and then startup the showoff server in that directory.  It will read in your
-<tt>showoff.json</tt> file for which sections go in which order and then will give
+and then startup the takeoff server in that directory.  It will read in your
+<tt>takeoff.json</tt> file for which sections go in which order and then will give
 you a URL to present from.
 
 It can:
@@ -58,32 +59,32 @@ remove sections easily.
 
 = Usage
 
-ShowOff is meant to be run in a ShowOff formatted repository - that means that
-it has a <tt>showoff.json</tt> file and a number of sections (subdirectories) with
+takeoff is meant to be run in a takeoff formatted repository - that means that
+it has a <tt>takeoff.json</tt> file and a number of sections (subdirectories) with
 markdown files for the slides you're presenting.
 
-    $ gem install showoff
-    $ git clone (showoff-repo)
-    $ cd (showoff-repo)
-    $ showoff serve
+    $ gem install takeoff
+    $ git clone (takeoff-repo)
+    $ cd (takeoff-repo)
+    $ takeoff serve
 
-If you run 'showoff' in the example subdirectory of ShowOff itself, it will
+If you run 'takeoff' in the example subdirectory of takeoff itself, it will
 show an example presentation, so you can see what it's like.
 
-You can also run 'showoff serve' inside a section subdirectory. If there is no
-<tt>showoff.json</tt> file then it will make its best guess, creating a presentation
+You can also run 'takeoff serve' inside a section subdirectory. If there is no
+<tt>takeoff.json</tt> file then it will make its best guess, creating a presentation
 from all `.md` files in alphabetical order in the given (or current)
 directory.
 
 = Slide Format
 
 You can break your slides up into sections of however many subdirectories deep
-you need.  ShowOff will recursively check all the directories mentioned in
-your <tt>showoff.json</tt> file for any markdown files (.md).  Each markdown file can
+you need.  takeoff will recursively check all the directories mentioned in
+your <tt>takeoff.json</tt> file for any markdown files (.md).  Each markdown file can
 have any number of slides in it, separating each slide with the '!SLIDE'
 keyword and optional slide styles.
 
-For example, if you run 'showoff create my_new_pres' it will create a new
+For example, if you run 'takeoff create my_new_pres' it will create a new
 starter presentation for you with one .md file at one/slide.md which will have
 the following contents:
 
@@ -101,8 +102,8 @@ the following contents:
 
 That represents two slides, the first contains just a large title, and the
 second is faded into view showing the title and three bullets that are then
-incrementally shown. In order for ShowOff to see those slides, your
-<tt>showoff.json</tt> file needs to look something like this:
+incrementally shown. In order for takeoff to see those slides, your
+<tt>takeoff.json</tt> file needs to look something like this:
 
     {
       "name": "Something",
@@ -117,7 +118,7 @@ include all the sections you want to show in which order you want to show
 them.
 
 Instead of a hash, you can use a plain string as an entry in the `sections`
-section of `showoff.json`.
+section of `takeoff.json`.
 
 And if that plain string starts with '#' then it is interpreted not as a
 filename, but as markdown. This is used for inserting interstitial slides
@@ -125,12 +126,6 @@ or notes -- for instance, Alex Chaffee's
 [Ruby Notes](http://github.com/alexch/ruby_notes)
 uses it to insert lab instructions between lecture slide sections, which may
 vary from venue to venue.
-
-If you want to keep the ability to emit an HTML document from your
-Markdown source file -- say, for a TextMate preview or a GitHub rendering
--- you can use angle brackets around the `!SLIDE` keyword and styles, e.g.
-
-    <!SLIDE bullets incremental transition=fade>
 
 Some useful styles for each slide are:
 
@@ -149,42 +144,11 @@ Some useful styles for each slide are:
 
 Check out the example directory included to see examples of most of these.
 
-Transitions can be supplied through the use of transition=tname on the !SLIDE
-definition, where tname is one of the following supported transitions:
-
-* blindX
-* blindY
-* blindZ
-* cover
-* curtainX
-* curtainY
-* fade
-* fadeZoom
-* growX
-* growY
-* none (this is the default)
-* scrollUp
-* scrollDown
-* scrollLeft
-* scrollRight
-* scrollHorz
-* scrollVert
-* shuffle
-* slideX
-* slideY
-* toss
-* turnUp
-* turnDown
-* turnLeft
-* turnRight
-* uncover
-* wipe
-* zoom
-
-The transitions are provided by jQuery Cycle plugin. See http://www.malsup.com/jquery/cycle/browser.html to view the effects and http://www.malsup.com/jquery/cycle/adv2.html for how to add custom effects.
-
 You can manage the presentation with the following keys:
 
+* shift+g : Generates the images required for your presentation to be streamed through Airplay. This is way faster than creating them on the fly, but it is not strictly necessary
+* a: sends the current slide to your AppleTV/Airserve.
+* shift-a : create a png out of the current slide and send it to AppleTV/Airserver
 * space, cursor right: next slide
 * shift-space, cursor left: previous slide
 * d: debug mode
@@ -195,18 +159,10 @@ You can manage the presentation with the following keys:
 
 = Showing plain old markdown
 
-If a markdown file has no !SLIDE keywords, then showoff will treat every line
+If a markdown file has no !SLIDE keywords, then takeoff will treat every line
 beginning with a single hash -- i.e. every H1 -- as a new slide in "bullets"
 style. Remember that you can't specify classes or transitions in this mode,
 and as soon as you add one !SLIDE you need them everywhere.
-
-= Preshow
-
-If you want to show a slideshow while you wait to speak, you can run a preshow.  Add a +_preshow+ directory
-to your project (I use a symlink, so I don't have to add all the images into Git), put a bunch of images in the +_preshow+ directory and optionally add a +preshow+.+json+ file that provides descriptions for any of the images.
-If you then press 'p' at the beginning of your presentation, it will prompt you for a number of minutes until
-you start.  Then it will count down the time until then, flipping through your pictures to entertain the
-audience in the meantime.  Press 'p' again to stop, or wait until the timer runs out.
 
 = Custom JavaScript
 
@@ -219,9 +175,9 @@ If you want to trigger some JavaScript as soon as a certain page is shown or
 when you switch to the next or previous slide, you can bind a callback to a
 custom event:
 
-* *showoff:show* will be triggered as soon as you enter a page
-* *showoff:next* will be triggered when you switch to the next page
-* *showoff:prev* will be triggered when you switch to the previous page
+* *takeoff:show* will be triggered as soon as you enter a page
+* *takeoff:next* will be triggered when you switch to the next page
+* *takeoff:prev* will be triggered when you switch to the previous page
 
 These events are triggered on the "div.content" child of the slide, so you must
 add a custom and unique class to your SLIDE to identify it:
@@ -230,7 +186,7 @@ add a custom and unique class to your SLIDE to identify it:
     # 1st Example h1
     <script>
     // bind to custom event
-    $(".custom_and_unique_class").bind("showoff:show", function (event) {
+    $(".custom_and_unique_class").bind("takeoff:show", function (event) {
       // animate the h1
       var h1 = $(event.target).find("h1");
       h1.delay(500)
@@ -239,17 +195,17 @@ add a custom and unique class to your SLIDE to identify it:
     });
     </script>
 
-This will bind an event handler for *showoff:show* to your slide. The
+This will bind an event handler for *takeoff:show* to your slide. The
 h1-element will be animated, as soon as this event is triggered on that slide.
 
-If you bind an event handler to the custom events *showoff:next* or
-*showoff:prev*, you can prevent the default action (that is switching to the
+If you bind an event handler to the custom events *takeoff:next* or
+*takeoff:prev*, you can prevent the default action (that is switching to the
 appropriate slide) by calling *event.preventDefault()*:
 
     !SLIDE prevent_default
     # 2nd Example h1
     <script>
-    $(".prevent_default").bind("showoff:next", function (event) {
+    $(".prevent_default").bind("takeoff:next", function (event) {
       var h1 = $(event.target).find("h1");
       if (h1.css("text-decoration") === "none") {
         event.preventDefault();
@@ -258,11 +214,11 @@ appropriate slide) by calling *event.preventDefault()*:
     });
     </script>
 
-This will bind an event handler for *showoff:next* to your slide. When you press
+This will bind an event handler for *takeoff:next* to your slide. When you press
 the right arrow key the first time, the h1-element will be decorated. When you
 press the right array key another time, you will switch to the next slide.
 
-The same applies to the *showoff:prev* event, of course.
+The same applies to the *takeoff:prev* event, of course.
 
 
 = Custom Stylesheets
@@ -302,7 +258,7 @@ Note that the example above uses CSS3 styling with ::+after+ and the +content+
 
 = Language highlighting
 
-Showoff uses {shjs}[http://shjs.sourceforge.net/] to highlight code blocks.
+takeoff uses {shjs}[http://shjs.sourceforge.net/] to highlight code blocks.
 If you begin a code block with three @-signs followed by a
 {programming language name}[http://shjs.sourceforge.net/doc/documentation.html],
 that line will be stripped and the rest of the block will become sparkly
@@ -314,14 +270,14 @@ and colorful.
 = Custom Ruby Files
 
 If you want to have executable Ruby code on your slides you must set the
-envrionment variable ENV['SHOWOFF_EVAL_RUBY']. This can be done with
+envrionment variable ENV['takeoff_EVAL_RUBY']. This can be done with
 
-    export SHOWOFF_EVAL_RUBY=1
+    export takeoff_EVAL_RUBY=1
 
 or
 
     # On Heroku
-    heroku config:add SHOWOFF_EVAL_RUBY=1
+    heroku config:add takeoff_EVAL_RUBY=1
 
 
 If you need supporting libraries when you evaluate the code. You can do this by
@@ -332,7 +288,7 @@ will be required when the presentation loads.
 
 The "add slide" feature can allow you to add the necessary boilerplate from your editor.  If you are using vim, you can
 
-    !showoff add -t code Check This Code
+    !takeoff add -t code Check This Code
 
 And your buffer will get
 
@@ -345,7 +301,7 @@ added where your cursor was.  Binding this to a keybinding can allow you to add 
 
 = Command Line Interface
 
-    showoff command_name [command-specific options] [--] arguments...
+    takeoff command_name [command-specific options] [--] arguments...
 
 * Use the command +help+ to get a summary of commands
 * Use the command <tt>help command_name</tt> to get a help for +command_name+
@@ -353,15 +309,15 @@ added where your cursor was.  Binding this to a keybinding can allow you to add 
 
 == Commands
 [<tt>add</tt>] Add a new slide at the end in a given dir
-[<tt>create</tt>] Create new showoff presentation
+[<tt>create</tt>] Create new takeoff presentation
 [<tt>help</tt>] Shows list of commands or help for one command
 [<tt>heroku</tt>] Setup your presentation to serve on Heroku
 [<tt>github</tt>] Setup your presentation to serve on GitHub Pages
-[<tt>serve</tt>] Serves the showoff presentation in the current directory (or a given dir)
+[<tt>serve</tt>] Serves the takeoff presentation in the current directory (or a given dir)
 [<tt>static</tt>] Generate static version of presentation
 
 
-== <tt>showoff add [title]</tt>
+== <tt>takeoff add [title]</tt>
 
 Add a new slide at the end in a given dir
 
@@ -380,153 +336,41 @@ These options are specified *after* the command.
 [<tt>-d, --dir=dir</tt>] Slide dir (where to put a new slide file)
 [<tt>-n, --name=basename</tt>] Slide name (name of the new slide file)
 [<tt>-s, --source=path to file</tt>] Include code from the given file as the slide body
-[<tt>-t, --style, --type=valid showoff style/type</tt>] Slide Type/Style <i>( default: <tt>title</tt>)</i>
+[<tt>-t, --style, --type=valid takeoff style/type</tt>] Slide Type/Style <i>( default: <tt>title</tt>)</i>
 [<tt>-u, --nonumber</tt>] Dont number the slide, use the given name verbatim
 
 
-== <tt>showoff create dir_name</tt>
+== <tt>takeoff create dir_name</tt>
 
-Create new showoff presentation
+Create new takeoff presentation
 
 *Aliases*
 * <tt><b>init</b></tt>
 
-This command helps start a new showoff presentation by setting up the proper directory structure for you.  It takes the directory name you would like showoff to create for you.
-
-=== options for create
-
-These options are specified *after* the command.
-
-[<tt>-d, --slidedir=arg</tt>] sample slide directory name <i>( default: <tt>one</tt>)</i>
-[<tt>-n, --nosamples</tt>] Dont create sample slides
+This command helps start a new takeoff presentation by setting up the proper directory structure for you.  It takes the directory name you would like takeoff to create for you.
 
 
-== <tt>showoff help [command]</tt>
+== <tt>takeoff help [command]</tt>
 
 Shows list of commands or help for one command
 
 
-== <tt>showoff heroku heroku_name</tt>
+== <tt>takeoff serve </tt>
 
-Setup your presentation to serve on Heroku
-
-Creates the Gemfile and config.ru file needed to push a showoff pres to heroku.  It will then run heroku create for you to register the new project on heroku and add the remote for you.  Then all you need to do is commit the new created files and run git push heroku to deploy.
-
-
-== <tt>showoff github</tt>
-
-Generates a static version of your site and puts it in a gh-pages branch for static serving on GitHub.
-
-=== options for github
-These options are specified *after* the command.
-
-[<tt>-f, --force</tt>] force overwrite of existing Gemfile/.gems and config.ru files if they exist
-[<tt>-g, --dotgems</tt>] Use older-style .gems file instead of bundler-style Gemfile
-[<tt>-p, --password=arg</tt>] add password protection to your heroku site
-
-
-== <tt>showoff serve </tt>
-
-Serves the showoff presentation in the current directory
+Serves the takeoff presentation in the current directory
 
 ==== options for serve
 These options are specified *after* the command.
 
-[<tt>-f, --pres_file=arg</tt>] Presentation file <i>(default: <tt>showoff.json</tt>)</i>
+[<tt>-f, --pres_file=arg</tt>] Presentation file <i>(default: <tt>takeoff.json</tt>)</i>
 [<tt>-h, --host=arg</tt>] Host or ip to run on <i>( default: <tt>localhost</tt>)</i>
 [<tt>-p, --port=arg</tt>] Port on which to run <i>( default: <tt>9090</tt>)</i>
 
 
-== <tt>showoff static name</tt>
+== <tt>takeoff static name</tt>
 
 Generate static version of presentation
 
-
-= PDF
-Append a "/pdf" to the end of your presentation URL, and a PDF will be generated within the browser. For example,
-http://localhost:9090/pdf
-
-
-= ZSH completion
-You can complete commands and options in ZSH, by installing a script:
-
-    mkdir -p $HOME/.zsh/Completion
-    cp script/_showoff $HOME/.zsh/Completion
-    echo 'fpath=(~/.zsh/Completion $fpath)' >> $HOME/.zshrc
-
-
-= Real World Usage
-
-So far, ShowOff has been used in the following presentations (and many others):
-
-* LinuxConf.au 2010 - Wrangling Git - Scott Chacon
-  http://github.com/schacon/showoff-wrangling-git
-* SF Ruby Meetup - Resque! - Chris Wanstrath
-  http://github.com/defunkt/sfruby-meetup-resque
-* RORO Sydney Talk, Feb 2010 - Beyond Actions - Dave Bolton
-  http://github.com/lightningdb/roro-syd-beyond-actions
-* LRUG's February meeting - Showing Off with Ruby - Joel Chippindale
-  http://github.com/mocoso/showing-off-with-ruby
-* PyCon 2010 - Hg and Git; Can't we all just get along? - Scott Chacon
-  http://github.com/schacon/pycon-hg-git
-* PdxJs Tech Talk - Asynchronous Coding For My Tiny Ruby Brain - Rick Olson
-  http://github.com/technoweenie/pdxjs-twitter-node
-* RORO Perth Talk - Rails 3; A Brief Introduction Darcy Laycock
-  http://github.com/Sutto/roro-perth-rails-3
-* PDXRB Tech Talk - Here's Sinatra - Jesse Cooke
-  http://github.com/jc00ke/pdxrb_sinatra
-* Red Dirt Ruby Conference May 2010 - Plain Old Tokyo Storage - Jeremy Hinegardner
-  http://github.com/copiousfreetime/plain-old-tokyo-storage-presentation
-  http://plain-old-tokyo-storage.heroku.com/
-* Lambda Lounge and StrangeLoop 2010 - JavaScript Functions : The Good Parts - Idioms for Encapsulation and Inheritance - Scott Bale
-  http://github.com/scottbale/JavaScript-Function-Idioms
-* Open Source Bridge 2010 - Creating a low-cost clustered virtualization environment w/ Ganeti - Lance Albertson
-  http://github.com/ramereth/presentation-ganeti
-* RailsConf 2010 - Domain-driven Test-assisted Production Rails Crisis Interventions - Rick Bradley
-  http://railsconf2010.rickbradley.com/ http://github.com/rick/presentation_railsconf_2010
-* WebWorkersCamp - 25 promising projects in 50 minutes - Bruno Michel
-  http://github.com/nono/Presentations/tree/master/20100703_25_promising_projects_in_50_minutes/
-* 11th Libre Software Meeting 2010 - Ruby 1.9, The future of Ruby? - Bruno Michel
-  http://github.com/nono/Presentations/tree/master/20100708_RMLL_Ruby_1.9/
-<<<<<<< HEAD
-* Lone Star PHP 2011 - Drupal - Chris Christensen
-  https://github.com/christianchristensen/Presentations/tree/master/20110611-lonestarphp-drupal
-=======
->>>>>>> dd672170824864181ccea05234fc2871fccf008d
-* Railsbridge Open Workshops - Sarah Allen, Sarah Mei, and Alex Chaffee
-  http://github.com/alexch/workshop
-
-
-If you use it for something, please let me know so I can add it.
-
-= Editor Support
-
-* TextMate Bundle - Showoff.tmdbundle - Dr Nic Williams
-  http://github.com/drnic/Showoff.tmbundle
-
-* Emacs major-mode - showoff-mode - Nick Parker
-  http://github.com/developernotes/showoff-mode
-
-= Future Plans
-
-I really want this to evolve into a dynamic presentation software server,
-that gives the audience a lot of interaction into the presentation -
-helping them decide dynamically what the content of the presentation is,
-ask questions without interupting the presenter, etc.  I want the audience
-to be able to download a dynamically generated PDF of either the actual
-talk that was given, or all the available slides, plus supplementary
-material. And I want the presenter (me) to be able to push each
-presentation to Heroku or GitHub pages for archiving super easily.
-
-= Why Not S5 or Slidy or Slidedown?
-
-S5 and Slidy are really cool, and I was going to use them, but mainly I wanted
-something more dynamic.  I wanted Slidy + Slidedown, where I could write my
-slideshows in a structured format in sections, where the sections could easily
-be moved around and between presentations and could be written in Markdown. I
-also like the idea of having interactive presentation system and didn't need
-half the features of S5/Slidy (style based print view, auto-scaling, themes,
-etc).
 
 = Requirements
 
@@ -537,8 +381,9 @@ etc).
 * json
 * GLI gem
 * Firefox or Chrome to present
-* PDFKit (optional, for generating PDF of presentation) https://github.com/jdpace/PDFKit
 
 = Contributing
 
-See the CONTRIB.txt file for how to contribute to this project
+Do I look like a serious guy? Submit functional code (prettyness will also be measured!) and I'll merge it. Also: consider if your
+contribution could also apply to https://github.com/schacon/showoff.git :)
+stream
