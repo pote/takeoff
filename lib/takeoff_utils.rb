@@ -1,6 +1,6 @@
-class ShowOffUtils
+class TakeOffUtils
   def self.presentation_config_file
-    @presentation_config_file ||= 'showoff.json'
+    @presentation_config_file ||= 'takeoff.json'
   end
 
   def self.presentation_config_file=(filename)
@@ -21,15 +21,15 @@ class ShowOffUtils
         end
       end
 
-      # create showoff.json
-      File.open(ShowOffUtils.presentation_config_file, 'w+') do |f|
+      # create takeoff.json
+      File.open(TakeOffUtils.presentation_config_file, 'w+') do |f|
         f.puts "{ \"name\": \"My Preso\", \"sections\": [ {\"section\":\"#{dir}\"} ]}"
       end
 
       if create_samples
-        puts "done. run 'showoff serve' in #{dirname}/ dir to see slideshow"
+        puts "done. run 'takeoff serve' in #{dirname}/ dir to see slideshow"
       else
-        puts "done. add slides, modify #{ShowOffUtils.presentation_config_file} and then run 'showoff serve' in #{dirname}/ dir to see slideshow"
+        puts "done. add slides, modify #{TakeOffUtils.presentation_config_file} and then run 'takeoff serve' in #{dirname}/ dir to see slideshow"
       end
     end
   end
@@ -45,8 +45,8 @@ class ShowOffUtils
   # password     - String containing password to protect your heroku site; nil means no password protection
   # use_dot_gems - boolea that, if true, indicates we should use the old, deprecated .gems file instead of Bundler
   def self.heroku(name,force,password,use_dot_gems)
-    if !File.exists?(ShowOffUtils.presentation_config_file)
-      puts "fail. not a showoff directory"
+    if !File.exists?(TakeOffUtils.presentation_config_file)
+      puts "fail. not a takeoff directory"
       return false
     end
 
@@ -67,16 +67,16 @@ class ShowOffUtils
 
     create_file_if_needed(HEROKU_CONFIG_FILE,force) do |file|
       modified_something = true
-      file.puts 'require "showoff"'
+      file.puts 'require "takeoff"'
       if password.nil?
-        file.puts 'run ShowOff.new'
+        file.puts 'run TakeOff.new'
       else
         file.puts 'require "rack"'
-        file.puts 'showoff_app = ShowOff.new'
-        file.puts 'protected_showoff = Rack::Auth::Basic.new(showoff_app) do |username, password|'
+        file.puts 'takeoff_app = TakeOff.new'
+        file.puts 'protected_takeoff = Rack::Auth::Basic.new(takeoff_app) do |username, password|'
         file.puts	"\tpassword == '#{password}'"
         file.puts 'end'
-        file.puts 'run protected_showoff'
+        file.puts 'run protected_takeoff'
       end
     end
 
@@ -100,7 +100,7 @@ class ShowOffUtils
   # generate a static version of the site into the gh-pages branch
   def self.github
     puts "Generating static content"
-    ShowOff.do_static(nil)
+    TakeOff.do_static(nil)
     `git add static`
     sha = `git write-tree`.chomp
     tree_sha = `git rev-parse #{sha}:static`.chomp
@@ -182,17 +182,17 @@ class ShowOffUtils
   end
 
   # Adds the given directory to this presentation, appending it to
-  # the end of showoff.json as well
+  # the end of takeoff.json as well
   def self.add_new_dir(dir)
     puts "Creating #{dir}..."
     Dir.mkdir dir
 
-    showoff_json = JSON.parse(File.read(ShowOffUtils.presentation_config_file))
-    showoff_json["section"] = dir
-    File.open(ShowOffUtils.presentation_config_file,'w') do |file|
-      file.puts JSON.generate(showoff_json)
+    takeoff_json = JSON.parse(File.read(TakeOffUtils.presentation_config_file))
+    takeoff_json["section"] = dir
+    File.open(TakeOffUtils.presentation_config_file,'w') do |file|
+      file.puts JSON.generate(takeoff_json)
     end
-    puts "#{ShowOffUtils.presentation_config_file} updated"
+    puts "#{TakeOffUtils.presentation_config_file} updated"
   end
 
   def self.blank?(string)
@@ -280,8 +280,8 @@ class ShowOffUtils
     [code,lines,width]
   end
 
-  def self.showoff_sections(dir = '.')
-    index = File.join(dir, ShowOffUtils.presentation_config_file)
+  def self.takeoff_sections(dir = '.')
+    index = File.join(dir, TakeOffUtils.presentation_config_file)
     sections = nil
     if File.exists?(index)
       data = JSON.parse(File.read(index))
@@ -299,13 +299,13 @@ class ShowOffUtils
         end
       end
     else
-      sections = ["."] # if there's no showoff.json file, make a boring one
+      sections = ["."] # if there's no takeoff.json file, make a boring one
     end
     sections
   end
 
-  def self.showoff_title(dir = '.')
-    index = File.join(dir, ShowOffUtils.presentation_config_file )
+  def self.takeoff_title(dir = '.')
+    index = File.join(dir, TakeOffUtils.presentation_config_file )
     order = nil
     if File.exists?(index)
       data = JSON.parse(File.read(index))
@@ -325,7 +325,7 @@ class ShowOffUtils
     EXTENSIONS[ext] || ext
   end
 
-  REQUIRED_GEMS = %w(bluecloth nokogiri showoff gli)
+  REQUIRED_GEMS = %w(bluecloth nokogiri takeoff gli)
 
   # Creates the file that lists the gems for heroku
   #
@@ -356,8 +356,8 @@ class ShowOffUtils
   # Examples
   #
   #   create_file_if_needed("config.ru",false) do |file|
-  #     file.puts "require 'showoff'"
-  #     file.puts "run ShowOff.new"
+  #     file.puts "require 'takeoff'"
+  #     file.puts "run TakeOff.new"
   #   end
   #
   # Returns true if the file was created
@@ -368,7 +368,7 @@ class ShowOffUtils
       end
       true
     else
-      puts "#{filename} exists; not overwriting (see showoff help heroku)"
+      puts "#{filename} exists; not overwriting (see takeoff help heroku)"
       false
     end
   end

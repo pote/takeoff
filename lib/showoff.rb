@@ -5,7 +5,7 @@ require 'nokogiri'
 require 'fileutils'
 
 here = File.expand_path(File.dirname(__FILE__))
-require "#{here}/showoff_utils"
+require "#{here}/takeoff_utils"
 require "#{here}/princely"
 
 begin
@@ -35,7 +35,7 @@ rescue LoadError
 end
 require 'pp'
 
-class ShowOff < Sinatra::Application
+class TakeOff < Sinatra::Application
 
   Version = VERSION = '0.5.0'
 
@@ -46,9 +46,9 @@ class ShowOff < Sinatra::Application
 
   def initialize(app=nil)
     super(app)
-    showoff_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    if Dir.pwd == showoff_dir
-      options.pres_dir = "#{showoff_dir}/example"
+    takeoff_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+    if Dir.pwd == takeoff_dir
+      options.pres_dir = "#{takeoff_dir}/example"
       @root_path = "."
     else
       options.pres_dir ||= Dir.pwd
@@ -57,7 +57,7 @@ class ShowOff < Sinatra::Application
     options.pres_dir = File.expand_path(options.pres_dir)
     if (options.pres_file)
       puts "Using #{options.pres_file}"
-      ShowOffUtils.presentation_config_file = options.pres_file
+      TakeOFfUtils.presentation_config_file = options.pres_file
     end
     puts "Serving presentation from #{options.pres_dir}"
 
@@ -255,7 +255,7 @@ class ShowOff < Sinatra::Application
     end
 
     def get_slides_html(static=false, pdf=false)
-      sections = ShowOffUtils.showoff_sections(options.pres_dir)
+      sections = TakeOffUtils.takeoff_sections(options.pres_dir)
       if sections
         data = ''
         sections.each do |section|
@@ -311,7 +311,7 @@ class ShowOff < Sinatra::Application
 
     def index(static=false)
       if static
-        @title = ShowOffUtils.showoff_title
+        @title = TakeOffUtils.takeoff_title
         @slides = get_slides_html(static)
         @asset_path = "./"
       end
@@ -383,14 +383,14 @@ class ShowOff < Sinatra::Application
    def self.do_static(what)
       what = "index" if !what
 
-      # Nasty hack to get the actual ShowOff module
-      showoff = ShowOff.new
-      while !showoff.is_a?(ShowOff)
-        showoff = showoff.instance_variable_get(:@app)
+      # Nasty hack to get the actual TakeOff module
+      takeoff = TakeOff.new
+      while !takeoff.is_a?(TakeOff)
+        takeoff = takeoff.instance_variable_get(:@app)
       end
-      name = showoff.instance_variable_get(:@pres_name)
-      path = showoff.instance_variable_get(:@root_path)
-      data = showoff.send(what, true)
+      name = takeoff.instance_variable_get(:@pres_name)
+      path = takeoff.instance_variable_get(:@root_path)
+      data = takeoff.send(what, true)
       if data.is_a?(File)
         FileUtils.cp(data.path, "#{name}.pdf")
       else
@@ -417,7 +417,7 @@ class ShowOff < Sinatra::Application
         # Set up file dir
         file_dir = File.join(out, 'file')
         FileUtils.makedirs(file_dir)
-        pres_dir = showoff.options.pres_dir
+        pres_dir = takeoff.options.pres_dir
 
         # ..., copy all user-defined styles and javascript files
         Dir.glob("#{pres_dir}/*.{css,js}").each { |path|
@@ -457,7 +457,7 @@ class ShowOff < Sinatra::Application
 
      if !FileTest.exists? "#{ @presentation_path }/png/#{ slide }-full.png"
        puts "Generating png version of slide #{ slide }, storing into #{ @presentation_path }/png"
-       %x[webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
+       %x[ webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
      end
 
      @airplay.send_image "#{ @presentation_path }/png/#{ slide }-full.png"
@@ -473,9 +473,9 @@ class ShowOff < Sinatra::Application
    end
 
   get '/eval_ruby' do
-    return eval_ruby(params[:code]) if ENV['SHOWOFF_EVAL_RUBY']
+    return eval_ruby(params[:code]) if ENV['TAKEOFF_EVAL_RUBY']
 
-    return "Ruby Evaluation is off. To turn it on set ENV['SHOWOFF_EVAL_RUBY']"
+    return "Ruby Evaluation is off. To turn it on set ENV['TAKEOFF_EVAL_RUBY']"
   end
 
   get %r{(?:image|file)/(.*)} do
@@ -485,7 +485,7 @@ class ShowOff < Sinatra::Application
   end
 
   get %r{/(.*)} do
-    @title = ShowOffUtils.showoff_title
+    @title = TakeOffUtils.takeoff_title
     what = params[:captures].first
     what = 'index' if "" == what
     if (what != "favicon.ico")
