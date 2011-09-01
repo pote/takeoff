@@ -1,4 +1,4 @@
-// Make CORE.out() write to showoff 'result' global variable http://github.com/scottbale/showoff
+// Make CORE.out() write to takeoff 'result' global variable http://github.com/scottbale/takeoff
 (function(CORE){
 
     CORE.require = function(toImport){
