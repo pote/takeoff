@@ -1,8 +1,7 @@
 #! /usr/bin/env ruby
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-#TODO this is requiring the local version by default, it shoulndt when it gets published and can be installed with rubygems
-require '/Users/pote/Code/takeoff/lib/takeoff'
+require 'takeoff'
 require 'rubygems'
 require 'gli'
 
