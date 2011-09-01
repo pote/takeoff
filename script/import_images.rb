@@ -1,6 +1,6 @@
 #! /usr/bin/env ruby
 
-# this script will take a directory full of images and make a showoff
+# this script will take a directory full of images and make a takeoff
 # presentation section out of them
 
 # usage: ./import_images.rb preso section_name /path/to/images
@@ -17,7 +17,7 @@ preso = ARGV[0]
 section = ARGV[1]
 path = ARGV[2]
 
-# look for showoff file
+# look for takeoff file
 if File.exists?(preso)
   Dir.chdir(preso) do
     # make the new directory
