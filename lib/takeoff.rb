@@ -9,12 +9,6 @@ require "#{here}/takeoff_utils"
 require "#{here}/princely"
 
 begin
-  require 'RMagick'
-rescue LoadError
-  $stderr.puts 'image sizing disabled - install rmagick'
-end
-
-begin
   require 'pdfkit'
 rescue LoadError
   $stderr.puts 'pdf generation disabled - install pdfkit'
@@ -205,17 +199,7 @@ class TakeOff < Sinatra::Application
       end
     end
 
-    if defined?(Magick)
-      def get_image_size(path)
-        if !cached_image_size.key?(path)
-          img = Magick::Image.ping(path).first
-          cached_image_size[path] = [img.columns, img.rows]
-        end
-        cached_image_size[path]
-      end
-    else
-      def get_image_size(path)
-      end
+    def get_image_size(path)
     end
 
     def update_commandline_code(slide)
