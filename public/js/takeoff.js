@@ -1,6 +1,6 @@
-/* ShowOff JS Logic */
+/* TakeOff JS Logic */
 
-var ShowOff = {};
+var TakeOff = {};
 
 var preso_started = false
 var slidenum = 0
@@ -87,7 +87,7 @@ function initializePresentation(prefix) {
 	setupSlideParamsCheck();
 	sh_highlightDocument(prefix+'/js/sh_lang/', '.min.js')
 
-	$("#preso").trigger("showoff:loaded");
+	$("#preso").trigger("takeoff:loaded");
 }
 
 function centerSlides(slides) {
@@ -213,7 +213,7 @@ function showSlide(back_step) {
 	removeResults();
 
   var currentContent = $(currentSlide).find(".content")
-	currentContent.trigger("showoff:show");
+	currentContent.trigger("takeoff:show");
 
 	return getCurrentNotes()
 }
@@ -255,7 +255,7 @@ function determineIncremental()
 function prevStep()
 {
 
-	var event = jQuery.Event("showoff:prev");
+	var event = jQuery.Event("takeoff:prev");
 	$(currentSlide).find(".content").trigger(event);
 	if (event.isDefaultPrevented()) {
 			return;
@@ -267,7 +267,7 @@ function prevStep()
 
 function nextStep()
 {
-	var event = jQuery.Event("showoff:next");
+	var event = jQuery.Event("takeoff:next");
 	$(currentSlide).find(".content").trigger(event);
 	if (event.isDefaultPrevented()) {
 			return;
