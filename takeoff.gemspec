@@ -1,7 +1,7 @@
 require './lib/takeoff'
 Gem::Specification.new do |s|
   s.name              = "takeoff"
-  s.version           = "0.1.0"
+  s.version           = "0.1.1"
   s.date              = "2011-08-31"
   s.summary           = "The best damn presentation software a developer could ever love - and then some more."
   s.homepage          = "http://github.com/pote/takeoff"
