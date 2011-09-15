@@ -62,7 +62,7 @@ class TakeOff < Sinatra::Application
     if defined?(Airplay)
       @presentation_path = options.pres_dir
       @airplay = Airplay::Client.new
-      $stderr.puts "Using Airplay Server \"#{ @airplay.active_server.name }\" (#{ @airplay.active_server.ip })"
+      $stderr.puts "Using Airplay Server \"#{ @airplay.active_server.name }\" (#{ @airplay.active_server.ip })" if !@airplay.active_server.nil?
     end
   end
 
@@ -437,9 +437,9 @@ class TakeOff < Sinatra::Application
 
    put '/airplay' do
      slide = params[:slide]
-     puts "Received airplay stream request for slide #{ slide }"
+     $stdout.puts "Received airplay stream request for slide #{ slide }"
 
-     if !FileTest.exists? "#{ @presentation_path }/png/#{ slide }-full.png"
+     if !FileTest.exists? "#{ @presentation_path }/png/#{ slide }-full.png" || params[:recreate_slide] == 'true'
        puts "Generating png version of slide #{ slide }, storing into #{ @presentation_path }/png"
        %x[ webkit2png -F http://0.0.0.0:9090/##{ slide } -o #{ @presentation_path }/png/#{ slide }]
      end

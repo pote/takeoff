@@ -414,20 +414,22 @@ function keyDown(event)
   }
   else if (key == 65 && shiftKeyActive) // 'A' for Airplay Stream
   {
-    streamAirplay(true);
+    streamAirplay(slidenum + 1, true);
   }
   else if (key == 65)
   {
-    streamAirplay()
+    streamAirplay(slidenum + 1)
   }
 	return true
 }
 
-function streamAirplay()
+function streamAirplay(slide, recreateSlide)
 {
-  console.log("Sending request for slide " + (slidenum + 1) + " to be streamed to Airplay");
+  // Right, so we should have optional arguments, but we don't, damn javascript
+  recreateSlide = (recreateSlide === undefined) ? false : recreateSlide;
+  console.log("Sending request for slide " + slide + " to be streamed to Airplay");
   var airplay = new XMLHttpRequest;
-  var params = "slide=" + (slidenum + 1);
+  var params = "slide=" + slide + "&&recreate_slide=" + recreateSlide;
 
   airplay.open("PUT", "/airplay?" + params);
   airplay.send(params);
